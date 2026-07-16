@@ -1,0 +1,37 @@
+# Secrets
+.env
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Model artifacts
+checkpoints/**/*.pt
+checkpoints/**/model.safetensors
+checkpoints/**/pytorch_model.bin
+!checkpoints/README.md
+
+# Generated vector database and V2 datasets
+data/chroma_db/
+data/processed_v2/
+data/smoke_v2/
+data/raw/
+
+# Generated reports / logs
+reports/
+evaluation_results*.json
+training_history.json
+*.log
+
+*.pyc
+checkpoints/*.pt

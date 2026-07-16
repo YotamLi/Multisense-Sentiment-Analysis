@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Evaluation Report — Multi-Task Sentiment Analysis</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Segoe UI',system-ui,-apple-system,sans-serif; background:#f8fafc; color:#334155; line-height:1.6; padding:2rem 3rem; max-width:1200px; margin:auto; }
+  h1 { font-size:1.8rem; color:#0f172a; border-bottom:3px solid #2563eb; padding-bottom:0.5rem; margin-bottom:1.5rem; }
+  h2 { font-size:1.3rem; color:#1e293b; margin:2rem 0 0.8rem; padding-left:0.5rem; border-left:4px solid #2563eb; }
+  h3 { font-size:1.05rem; }
+  table { border-collapse:collapse; width:100%; margin:0.5rem 0 1.5rem; font-size:0.9rem; table-layout:fixed; }
+  th { background:#1e293b; color:white; padding:0.6rem 1rem; text-align:right; font-weight:600; }
+  th:first-child { text-align:left; }
+  td { padding:0.5rem 1rem; border-bottom:1px solid #e2e8f0; text-align:right; }
+  td:first-child { text-align:left; }
+  tr:hover { background:#f1f5f9; }
+  .highlight { background:#eff6ff !important; font-weight:700; }
+  .avg-row td { border-top:2px solid #1e293b; font-weight:700; }
+  .chart-grid { display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin:1rem 0; }
+  .chart-grid img { width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
+  .chart-full img { width:100%; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin:1rem 0; }
+  .badge { display:inline-block; background:#2563eb; color:white; padding:0.15rem 0.6rem; border-radius:12px; font-size:0.8rem; font-weight:600; margin-left:0.5rem; }
+  .metric-cards { display:grid; grid-template-columns:repeat(4,1fr); gap:1rem; margin:1rem 0 2rem; }
+  .metric-card { background:white; border-radius:10px; padding:1.2rem; text-align:center; box-shadow:0 2px 8px rgba(0,0,0,0.06); border-top:3px solid #2563eb; }
+  .metric-card .value { font-size:1.8rem; font-weight:800; color:#0f172a; }
+  .metric-card .label { font-size:0.8rem; color:#64748b; text-transform:uppercase; letter-spacing:0.05em; }
+  .metric-card .task { font-size:0.85rem; color:#2563eb; font-weight:600; margin-bottom:0.2rem; }
+</style>
+</head>
+<body>
+
+<h1>Evaluation Report</h1>
+
+<div class="metric-cards">
+  <div class="metric-card">
+    <div class="task">Sentiment</div>
+    <div class="value">69.7%</div>
+    <div class="label">Macro F1</div>
+  </div>
+  <div class="metric-card">
+    <div class="task">Emotion</div>
+    <div class="value">63.7%</div>
+    <div class="label">Macro F1</div>
+  </div>
+  <div class="metric-card">
+    <div class="task">Intensity</div>
+    <div class="value">55.1%</div>
+    <div class="label">Macro F1</div>
+  </div>
+  <div class="metric-card">
+    <div class="task">Topic</div>
+    <div class="value">65.8%</div>
+    <div class="label">Macro F1</div>
+  </div>
+</div>
+
+<h2>1. Model Comparison &mdash; Sentiment Polarity</h2>
+<table>
+<thead><tr>
+  <th>Model</th><th>Accuracy</th><th>Macro F1</th><th>Weighted F1</th><th>Samples</th>
+</tr></thead>
+<tbody><tr>
+            <td style="font-weight:700">Multi-Head BERT</td>
+            <td style="font-weight:700">0.7094</td>
+            <td style="font-weight:700">0.6970</td>
+            <td style="font-weight:700">0.7095</td>
+            <td>2,044</td>
+        </tr><tr>
+            <td style="font-weight:400">BERT-base (single head)</td>
+            <td>0.7079</td>
+            <td>0.6977</td>
+            <td>0.7104</td>
+            <td>2,044</td>
+        </tr><tr>
+            <td style="font-weight:400">VADER (rule-based)</td>
+            <td>0.5396</td>
+            <td>0.5271</td>
+            <td>0.5345</td>
+            <td>2,044</td>
+        </tr><tr>
+            <td style="font-weight:400">Naive Bayes (TF-IDF)</td>
+            <td>0.5352</td>
+            <td>0.3630</td>
+            <td>0.4560</td>
+            <td>2,044</td>
+        </tr></tbody>
+</table>
+
+<div class="chart-full"><img src="evaluation_figures/model_comparison.png" alt="Model Comparison"></div>
+
+<h2>2. Multi-Head BERT &mdash; Per-Task Breakdown</h2>
+<table>
+<thead><tr>
+  <th>Task</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>Macro F1</th><th>Weighted F1</th><th>Samples</th>
+</tr></thead>
+<tbody>
+  <tr>
+            <td>Sentiment</td>
+            <td>0.7094</td>
+            <td>0.6931</td>
+            <td>0.7018</td>
+            <td>0.6970</td>
+            <td>0.7095</td>
+            <td>2,044</td>
+        </tr><tr>
+            <td>Emotion</td>
+            <td>0.7889</td>
+            <td>0.6768</td>
+            <td>0.6203</td>
+            <td>0.6373</td>
+            <td>0.7841</td>
+            <td>1,947</td>
+        </tr><tr>
+            <td>Intensity</td>
+            <td>0.5767</td>
+            <td>0.6179</td>
+            <td>0.5364</td>
+            <td>0.5515</td>
+            <td>0.5747</td>
+            <td>541</td>
+        </tr><tr>
+            <td>Topic</td>
+            <td>0.8689</td>
+            <td>0.7373</td>
+            <td>0.6353</td>
+            <td>0.6578</td>
+            <td>0.8625</td>
+            <td>679</td>
+        </tr>
+</tbody>
+</table>
+
+<div class="chart-full"><img src="evaluation_figures/bert_per_task.png" alt="BERT Per-Task"></div>
+
+<h2>3. Per-Class F1 Scores</h2>
+
+        <h3 style="margin-top:1.5rem;color:#1e293b">Sentiment</h3>
+        <table><thead><tr>
+            <th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th>
+        </tr></thead><tbody><tr>
+                <td>positive</td>
+                <td>0.7387</td>
+                <td>0.7673</td>
+                <td>0.7527</td>
+                <td>722</td>
+            </tr><tr>
+                <td>negative</td>
+                <td>0.6131</td>
+                <td>0.6489</td>
+                <td>0.6305</td>
+                <td>376</td>
+            </tr><tr>
+                <td>neutral</td>
+                <td>0.7277</td>
+                <td>0.6892</td>
+                <td>0.7079</td>
+                <td>946</td>
+            </tr></tbody></table>
+        <h3 style="margin-top:1.5rem;color:#1e293b">Emotion</h3>
+        <table><thead><tr>
+            <th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th>
+        </tr></thead><tbody><tr>
+                <td>joy</td>
+                <td>0.8611</td>
+                <td>0.9093</td>
+                <td>0.8845</td>
+                <td>1,070</td>
+            </tr><tr>
+                <td>anger</td>
+                <td>0.6591</td>
+                <td>0.6925</td>
+                <td>0.6754</td>
+                <td>335</td>
+            </tr><tr>
+                <td>sadness</td>
+                <td>0.7054</td>
+                <td>0.5322</td>
+                <td>0.6067</td>
+                <td>171</td>
+            </tr><tr>
+                <td>fear</td>
+                <td>0.5000</td>
+                <td>0.6000</td>
+                <td>0.5455</td>
+                <td>35</td>
+            </tr><tr>
+                <td>surprise</td>
+                <td>0.7564</td>
+                <td>0.6980</td>
+                <td>0.7260</td>
+                <td>298</td>
+            </tr><tr>
+                <td>disgust</td>
+                <td>0.5789</td>
+                <td>0.2895</td>
+                <td>0.3860</td>
+                <td>38</td>
+            </tr></tbody></table>
+        <h3 style="margin-top:1.5rem;color:#1e293b">Intensity</h3>
+        <table><thead><tr>
+            <th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th>
+        </tr></thead><tbody><tr>
+                <td>strong</td>
+                <td>0.6531</td>
+                <td>0.3596</td>
+                <td>0.4638</td>
+                <td>89</td>
+            </tr><tr>
+                <td>medium</td>
+                <td>0.4840</td>
+                <td>0.7123</td>
+                <td>0.5763</td>
+                <td>212</td>
+            </tr><tr>
+                <td>weak</td>
+                <td>0.7167</td>
+                <td>0.5375</td>
+                <td>0.6143</td>
+                <td>240</td>
+            </tr></tbody></table>
+        <h3 style="margin-top:1.5rem;color:#1e293b">Topic</h3>
+        <table><thead><tr>
+            <th>Class</th><th>Precision</th><th>Recall</th><th>F1</th><th>Support</th>
+        </tr></thead><tbody><tr>
+                <td>arts_and_culture</td>
+                <td>0.2500</td>
+                <td>0.0667</td>
+                <td>0.1053</td>
+                <td>15</td>
+            </tr><tr>
+                <td>business_and_entrepreneurs</td>
+                <td>0.8571</td>
+                <td>0.4138</td>
+                <td>0.5581</td>
+                <td>29</td>
+            </tr><tr>
+                <td>pop_culture</td>
+                <td>0.9339</td>
+                <td>0.8989</td>
+                <td>0.9160</td>
+                <td>267</td>
+            </tr><tr>
+                <td>daily_life</td>
+                <td>0.6176</td>
+                <td>0.8750</td>
+                <td>0.7241</td>
+                <td>96</td>
+            </tr><tr>
+                <td>sports_and_gaming</td>
+                <td>0.9555</td>
+                <td>0.9712</td>
+                <td>0.9633</td>
+                <td>243</td>
+            </tr><tr>
+                <td>science_and_technology</td>
+                <td>0.8095</td>
+                <td>0.5862</td>
+                <td>0.6800</td>
+                <td>29</td>
+            </tr></tbody></table>
+
+<div class="chart-full"><img src="evaluation_figures/per_class_f1.png" alt="Per-Class F1"></div>
+
+<h2>4. Confusion Matrices</h2>
+<div class="chart-full"><img src="evaluation_figures/confusion_matrices.png" alt="Confusion Matrices"></div>
+
+</body>
+</html>

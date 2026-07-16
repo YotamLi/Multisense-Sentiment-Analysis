@@ -1,0 +1,67 @@
+model:
+  encoder_name: "bert-base-uncased"
+  max_length: 64
+  hidden_dim: 256
+  dropout: 0.3
+  heads:
+    sentiment:
+      num_classes: 3
+      labels: ["positive", "negative", "neutral"]
+    emotion:
+      num_classes: 6
+      labels: ["joy", "anger", "sadness", "fear", "surprise", "disgust"]
+    intensity:
+      num_classes: 3
+      labels: ["strong", "medium", "weak"]
+    topic:
+      num_classes: 6
+      labels: ["arts_and_culture", "business_and_entrepreneurs", "pop_culture", "daily_life", "sports_and_gaming", "science_and_technology"]
+
+training:
+  batch_size: 8
+  epochs: 1
+  learning_rate_encoder: 2.0e-5
+  learning_rate_heads: 1.0e-3
+  weight_decay: 0.01
+  warmup_ratio: 0.1
+  early_stopping_patience: 1
+  early_stopping_min_delta: 0.0001
+  monitor_metric: "macro_f1"
+  monitor_weights:
+    sentiment: 0.35
+    emotion: 0.30
+    intensity: 0.20
+    topic: 0.15
+  loss_weights:
+    sentiment: 1.5
+    emotion: 0.6
+    intensity: 1.0
+    topic: 0.3
+  gradient_accumulation_steps: 2
+  fp16: true
+
+data:
+  raw_dir: "data/raw"
+  processed_dir: "data/smoke_v2"
+  lexicon_dir: "data/lexicons"
+  custom_dir: "data/custom"
+  train_split: 0.8
+  val_split: 0.1
+  test_split: 0.1
+
+rag:
+  embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
+  collection_name: "sentiment_lexicon"
+  persist_directory: "data/chroma_db"
+  top_k: 5
+
+pipeline:
+  llm_model: "gemini-3.5-flash"
+  temperature: 0.0
+  max_tokens: 2048
+  thinking_level: "minimal"
+  allow_llm_topic_correction: false
+
+demo:
+  server_port: 7860
+  share: false
